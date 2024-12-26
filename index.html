@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Typing Test</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <h1>Typing Test</h1>
+            <p>Test your typing speed and accuracy!</p>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- Test Controls Section -->
+            <section id="controls">
+                <label for="duration">Test Duration:</label>
+                <select id="duration">
+                    <option value="60">1 Minute</option>
+                    <option value="300">5 Minutes</option>
+                    <option value="600">10 Minutes</option>
+                </select>
+
+                <label for="difficulty">Difficulty Level:</label>
+                <select id="difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="moderate">Moderate</option>
+                    <option value="advanced">Advanced</option>
+                </select>
+
+                <button id="startButton">Start Test</button>
+            </section>
+
+            <!-- Test Area Section -->
+            <section id="testArea">
+                <p id="testParagraph">Click "Start Test" to begin typing!</p>
+                <textarea id="userInput" placeholder="Start typing here..." disabled></textarea>
+            </section>
+
+            <!-- Timer Section -->
+            <section id="timer">
+                <p id="countdown">Time Remaining: <span id="timeLeft">00:00</span></p>
+            </section>
+
+            <!-- Results Section -->
+            <section id="results" class="hidden">
+                <h2>Test Results</h2>
+                <p id="wpm">Words per minute: 0</p>
+                <p id="accuracy">Accuracy: 0%</p>
+                <p id="errors">Errors: 0</p>
+                <div id="feedback">
+                    <p>Great job! Keep practicing!</p>
+                </div>
+                <button id="retryButton">Retry</button>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2024 Typing Test. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/feedback.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
