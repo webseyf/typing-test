@@ -1,209 +1,343 @@
-/* Global Styles */
+/* Basic reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* Global Styles */
 body {
-  font-family: 'Arial', sans-serif;
-  background-color: #f4f4f9;
+  font-family: 'Roboto', sans-serif;
+  background-color: #f4f4f4;
   color: #333;
   line-height: 1.6;
 }
 
-h1, h2 {
-  color: #2c3e50;
-}
-
+/* Container Class */
 .container {
-  width: 90%;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Header */
 header {
-  background-color: #2980b9;
-  padding: 20px 0;
   text-align: center;
-}
-
-header h1 {
+  padding: 20px;
+  background-color: #4CAF50;
   color: white;
-  font-size: 2.5rem;
-}
-
-header p {
-  color: #ecf0f1;
-  font-size: 1rem;
-}
-
-/* Controls Section */
-#controls {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+  border-radius: 10px;
   margin-bottom: 20px;
 }
 
-#controls select, #controls button {
-  padding: 10px;
-  font-size: 1rem;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+header h1 {
+  font-size: 2.5rem;
 }
 
-#controls button {
-  background-color: #27ae60;
-  color: white;
-  cursor: pointer;
-}
-
-#controls button:hover {
-  background-color: #2ecc71;
-}
-
-#controls select {
-  width: 30%;
+/* Test Controls Section */
+#controls {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 20px;
 }
 
 #controls label {
-  font-size: 1rem;
+  font-size: 1.2rem;
+  margin-right: 10px;
+  display: inline-block;
+  width: 150px;
+  text-align: left;
+}
+
+#controls select {
+  font-size: 1.2rem;
+  padding: 12px 20px;
+  margin: 5px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  background-color: #ffffff;
+  color: #333;
+  width: 100%;
+  cursor: pointer;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+#controls select:hover {
+  border-color: #4CAF50;
+}
+
+#controls select:focus {
+  border-color: #4CAF50;
+  background-color: #f9f9f9;
+  outline: none;
+}
+
+#controls button {
+  font-size: 1.2rem;
+  padding: 12px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+}
+
+#controls button:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+#controls button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.4);
 }
 
 /* Test Area */
 #testArea {
-  margin: 30px 0;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 #testParagraph {
   font-size: 1.2rem;
+  text-align: center;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  width: 80%;
   margin-bottom: 20px;
-  color: #2c3e50;
-  word-wrap: break-word;
 }
 
 #userInput {
-  width: 100%;
-  min-height: 100px;
-  font-size: 1.5rem;
-  padding: 10px;
-  margin-top: 20px;
+  font-size: 1.2rem;
+  width: 80%;
+  padding: 15px;
+  height: 150px;
+  border-radius: 10px;
   border: 1px solid #ccc;
-  border-radius: 5px;
-  color: #2c3e50;
+  resize: none;
+  margin-bottom: 20px;
 }
 
 #userInput:disabled {
-  background-color: #ecf0f1;
+  background-color: #f2f2f2;
 }
 
 /* Timer Section */
 #timer {
-  text-align: center;
-  margin-top: 20px;
-}
-
-#countdown {
   font-size: 1.5rem;
-  font-weight: bold;
-  color: #e74c3c;
-}
-
-/* Results Section */
-#results {
   text-align: center;
-  padding: 30px;
-  background-color: #ecf0f1;
-  border-radius: 5px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin: 20px 0;
 }
 
-#results.hidden {
+#timeLeft {
+  font-weight: bold;
+  font-size: 2rem;
+  animation: pulseTimer 1.5s infinite;
+}
+
+/* Keyframe Animation for Timer Pulse */
+@keyframes pulseTimer {
+  0% {
+    color: #333;
+  }
+  50% {
+    color: #4CAF50;
+  }
+  100% {
+    color: #333;
+  }
+}
+
+/* Results Section Animation */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#results {
   display: none;
+  text-align: center;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 600px;
+  animation: fadeInUp 0.6s ease-out forwards;
 }
 
 #results h2 {
-  color: #2980b9;
+  font-size: 2rem;
+  margin-bottom: 10px;
 }
 
 #results p {
   font-size: 1.2rem;
 }
 
-#results #feedback p {
-  font-size: 1.1rem;
-  color: #27ae60;
-}
-
-/* Retry Button */
 #retryButton {
-  padding: 10px 20px;
-  background-color: #2980b9;
+  font-size: 1.2rem;
+  padding: 12px 20px;
+  background-color: #4CAF50;
   color: white;
-  border: none;
   border-radius: 5px;
+  border: none;
   cursor: pointer;
-  font-size: 1rem;
+  width: 100%;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 #retryButton:hover {
-  background-color: #3498db;
+  background-color: #45a049;
+  transform: scale(1.05);
 }
 
-/* Footer */
-footer {
-  background-color: #34495e;
-  color: white;
-  padding: 20px 0;
+#retryButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.4);
+}
+
+/* Media Query for Responsiveness */
+@media (max-width: 768px) {
+  #controls {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #userInput {
+    width: 90%;
+  }
+
+  #testParagraph {
+    width: 90%;
+  }
+
+  #results {
+    width: 90%;
+  }
+}
+/* Basic reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Global Styles */
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Modal Styles */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Black background with transparency */
+  padding-top: 100px;
+  overflow: auto;
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 5% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 600px;
   text-align: center;
 }
 
-footer p {
-  font-size: 0.9rem;
+.close {
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  top: 10px;
+  right: 25px;
+  cursor: pointer;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  #controls {
-      flex-direction: column;
-      align-items: center;
-  }
-
-  #controls select, #controls button {
-      width: 80%;
-      margin-bottom: 10px;
-  }
-
-  #userInput {
-      font-size: 1.2rem;
-  }
-
-  #testParagraph {
-      font-size: 1rem;
-  }
-
-  #countdown {
-      font-size: 1.2rem;
-  }
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 
-@media (max-width: 480px) {
-  header h1 {
-      font-size: 1.8rem;
-  }
+h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
 
-  #testParagraph {
-      font-size: 1rem;
-  }
+ul {
+  text-align: left;
+  margin: 20px 0;
+}
 
-  #userInput {
-      font-size: 1rem;
-  }
+ul li {
+  margin: 10px 0;
+}
 
-  #countdown {
-      font-size: 1.2rem;
-  }
+.button {
+  font-size: 1.2rem;
+  padding: 12px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #45a049;
+}
+
+#startTestButton {
+  margin-top: 20px;
+}
+
+/* Hide elements by default */
+.hidden {
+  display: none;
+}
+/* Progress Bar Container */
+.progress-bar-container {
+  width: 100%;
+  height: 10px;
+  background-color: #e0e0e0; /* Light gray background */
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+/* Progress Bar */
+.progress-bar {
+  height: 100%;
+  width: 0%; /* Start with 0% width */
+  background-color: #4CAF50; /* Green for progress */
+  border-radius: 5px;
+  transition: width 1s linear; /* Smooth transition */
 }

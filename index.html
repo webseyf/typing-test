@@ -5,60 +5,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Typing Test</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Typing Test Challenge</title>
+    <link rel="stylesheet" href="css/style.css"> <!-- External CSS file link -->
 </head>
 
 <body>
+    <!-- Main Header Section -->
     <header>
         <div class="container">
-            <h1>Typing Test</h1>
-            <p>Test your typing speed and accuracy!</p>
+            <h1>Typing Test Challenge</h1>
+            <p class="subheading">Test your typing speed, accuracy, and improve your skills!</p>
         </div>
     </header>
 
+    <!-- Instructions Modal -->
+    <div id="instructionsModal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal" class="close">&times;</span>
+            <h2>Typing Test Instructions</h2>
+            <p>Welcome to the typing test! Please follow these instructions:</p>
+            <ul>
+                <li>Select the duration of the test (1, 5, or 10 minutes).</li>
+                <li>Choose your desired difficulty level (Easy, Moderate, or Advanced).</li>
+                <li>Select a category for the test (Quotes, Random Words, or Stories).</li>
+                <li>Click "Start Test" to begin typing the text displayed on the screen.</li>
+                <li>The timer will start, and you can type in the provided input field.</li>
+                <li>Once the test ends, your results (WPM, accuracy, errors) will be displayed.</li>
+            </ul>
+            <button id="startTestButton" class="button">Start Test</button>
+        </div>
+    </div>
+
     <main>
         <div class="container">
-            <!-- Test Controls Section -->
-            <section id="controls">
-                <label for="duration">Test Duration:</label>
+            <!-- Test Control Section -->
+            <section id="controls" class="controls">
+                <label for="duration">Test Duration</label>
                 <select id="duration">
                     <option value="60">1 Minute</option>
                     <option value="300">5 Minutes</option>
                     <option value="600">10 Minutes</option>
                 </select>
 
-                <label for="difficulty">Difficulty Level:</label>
+                <label for="difficulty">Difficulty Level</label>
                 <select id="difficulty">
                     <option value="easy">Easy</option>
                     <option value="moderate">Moderate</option>
                     <option value="advanced">Advanced</option>
                 </select>
 
-                <button id="startButton">Start Test</button>
-            </section>
+                <label for="category">Test Category</label>
+                <select id="category">
+                    <option value="quotes">Quotes</option>
+                    <option value="words">Random Words</option>
+                    <option value="stories">Stories</option>
+                </select>
 
-            <!-- Test Area Section -->
-            <section id="testArea">
+                <button id="startButton" class="button">Start Test</button>
+            </section>
+            <section id="feedbackSection" class="feedback-section">
+                <p id="feedback">Your feedback will appear here!</p>
+            </section>
+            
+            <!-- Typing Test Section -->
+            <section id="testArea" class="test-area">
                 <p id="testParagraph">Click "Start Test" to begin typing!</p>
                 <textarea id="userInput" placeholder="Start typing here..." disabled></textarea>
             </section>
 
             <!-- Timer Section -->
-            <section id="timer">
-                <p id="countdown">Time Remaining: <span id="timeLeft">00:00</span></p>
+            <section id="timer" class="timer">
+                <p>Time Remaining: <span id="timeLeft">00:00</span></p>
+                <div id="progressBarContainer" class="progress-bar-container">
+                    <div id="progressBar" class="progress-bar"></div>
+                </div>
             </section>
 
             <!-- Results Section -->
-            <section id="results" class="hidden">
-                <h2>Test Results</h2>
+            <section id="results" class="results hidden">
+                <h2>Your Results</h2>
                 <p id="wpm">Words per minute: 0</p>
                 <p id="accuracy">Accuracy: 0%</p>
                 <p id="errors">Errors: 0</p>
-                <div id="feedback">
-                    <p>Great job! Keep practicing!</p>
-                </div>
-                <button id="retryButton">Retry</button>
+                <button id="retryButton" class="button">Retry</button>
             </section>
         </div>
     </main>
@@ -69,10 +98,44 @@
         </div>
     </footer>
 
-    <script src="js/utils.js"></script>
-    <script src="js/feedback.js"></script>
-    <script src="js/timer.js"></script>
-    <script src="js/main.js"></script>
+    <!-- JavaScript Files -->
+    <script type="module" src="js/utils.js"></script>
+    <script type="module" src="js/feedback.js"></script>
+    <script type="module" src="js/timer.js"></script>
+    <script type="module" src="js/main.js"></script>
+
+    <script>
+        // Modal and Test Control Script
+        const modal = document.getElementById('instructionsModal');
+        const closeModal = document.getElementById('closeModal');
+        const startTestButton = document.getElementById('startTestButton');
+        const startButton = document.getElementById('startButton');
+        const userInput = document.getElementById('userInput');
+        const testArea = document.getElementById('testArea');
+        
+        // Show the modal when the page loads
+        window.onload = () => {
+            modal.style.display = "block";
+        };
+
+        // Close modal
+        closeModal.onclick = () => {
+            modal.style.display = "none";
+        };
+
+        // Start the test after closing the modal
+        startTestButton.onclick = () => {
+            modal.style.display = "none"; // Hide instructions modal
+            testArea.style.display = 'block'; // Show the test area
+            userInput.disabled = false; // Enable the text input
+            startButton.disabled = true; // Disable the start button
+        };
+
+        // Control start button to reset input on retry
+        document.getElementById('retryButton').onclick = function() {
+            window.location.reload(); // Reload the page for a new session
+        };
+    </script>
 </body>
 
 </html>

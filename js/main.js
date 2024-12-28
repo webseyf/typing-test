@@ -1,5 +1,8 @@
-// Importing necessary functions from other modules
-import { getRandomText } from './data/text-data.js';
+// Importing necessary functions
+import { getRandomChallengeText } from '../data/text-data.js';
+import { startTimer, stopTimer } from './timer.js';
+import { formatNumberWithCommas, validateDifficultyInput } from './utils.js';
+import { provideRealTimeFeedback, provideEndTestSuggestions } from './feedback.js';
 
 // Elements from the HTML
 const startButton = document.getElementById('startButton');
@@ -13,12 +16,13 @@ const errorsResult = document.getElementById('errors');
 const retryButton = document.getElementById('retryButton');
 const feedback = document.getElementById('feedback');
 
+// Progress Bar Elements
+const progressBar = document.getElementById('progressBar');
+
 // Test Settings
 let testDuration = 60; // Default duration (1 minute)
 let difficulty = 'easy'; // Default difficulty
-let timerInterval;
-let timeRemaining;
-let startTime;
+let challengeCategory = 'quotes'; // Default challenge category
 let isTestRunning = false;
 let correctChars = 0;
 let incorrectChars = 0;
@@ -27,151 +31,156 @@ let totalChars = 0;
 // Event Listeners
 startButton.addEventListener('click', startTest);
 retryButton.addEventListener('click', retryTest);
+userInput.addEventListener('input', handleUserInput);
 
 // Functions
 
 // Start the typing test
 function startTest() {
-    if (isTestRunning) return; // Prevent multiple test starts
-    
-    // Get selected duration and difficulty
+    console.log('Start button clicked');
+    if (isTestRunning) return;
+
+    // Get selected duration, difficulty, and challenge category
     testDuration = parseInt(document.getElementById('duration').value);
     difficulty = document.getElementById('difficulty').value;
-    
+    challengeCategory = document.getElementById('challengeCategory').value;
+
+    console.log('Test Duration:', testDuration, 'Difficulty:', difficulty, 'Category:', challengeCategory);
+
+    // Validate difficulty input
+    if (!validateDifficultyInput(difficulty)) {
+        alert('Invalid difficulty selected. Please choose a valid level.');
+        return;
+    }
+
     // Disable controls during the test
-    document.getElementById('duration').disabled = true;
-    document.getElementById('difficulty').disabled = true;
-    startButton.disabled = true;
-    
-    // Set the test paragraph
-    testParagraph.textContent = getRandomText(difficulty);
-    
-    // Enable input field for typing
+    toggleControls(true);
+
+    // Set the test paragraph based on the selected challenge
+    testParagraph.textContent = getRandomChallengeText(challengeCategory);
+
+    // Reset UI and variables
+    resetTestState();
     userInput.disabled = false;
     userInput.value = '';
+
+    // Focus the input field to allow typing immediately
     userInput.focus();
 
-    // Start the countdown timer
-    timeRemaining = testDuration;
-    startTimer();
-
-    // Reset counters
-    correctChars = 0;
-    incorrectChars = 0;
-    totalChars = 0;
+    // Start the timer
+    console.log('Starting the timer...');
+    startTimer(testDuration, updateTimer, endTest);
 
     isTestRunning = true;
 }
 
-// Start the countdown timer
-function startTimer() {
-    startTime = Date.now();
-    timerInterval = setInterval(updateTimer, 1000);
+// Reset test state
+function resetTestState() {
+    correctChars = 0;
+    incorrectChars = 0;
+    totalChars = 0;
+    resultsSection.classList.add('hidden');
+    feedback.textContent = '';
 }
 
-// Update the timer
-function updateTimer() {
-    const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
-    timeRemaining = testDuration - elapsedTime;
+// Handle user input and validate typing
+function handleUserInput() {
+    const typedText = userInput.value;
+    const testText = testParagraph.textContent;
 
-    if (timeRemaining <= 0) {
-        clearInterval(timerInterval);
-        endTest();
-    }
+    correctChars = 0;
+    incorrectChars = 0;
+    totalChars = typedText.length;
 
-    // Format time as mm:ss
-    const minutes = Math.floor(timeRemaining / 60);
-    const seconds = timeRemaining % 60;
-    countdown.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    // Highlight correct and incorrect characters
+    const highlightedText = Array.from(typedText).map((char, index) => {
+        if (char === testText[index]) {
+            correctChars++;
+            return `<span style="color: green">${char}</span>`;
+        } else {
+            incorrectChars++;
+            return `<span style="color: red">${char}</span>`;
+        }
+    }).join(''); 
+
+    // Update the test paragraph with highlighted text
+    testParagraph.innerHTML = highlightedText + testText.slice(typedText.length);
+
+    // Update feedback in real-time
+    const accuracy = calculateAccuracy(); // Dynamic accuracy calculation
+    const errors = calculateErrors(); // Dynamic errors calculation
+    provideRealTimeFeedback(accuracy, errors, feedback); // Function to update feedback UI
+
+    // Show accuracy and errors in UI
+    accuracyResult.textContent = `Accuracy: ${accuracy}%`;
+    errorsResult.textContent = `Errors: ${errors}`;
 }
 
 // End the typing test
 function endTest() {
     isTestRunning = false;
-    userInput.disabled = true; // Disable input after test ends
+    userInput.disabled = true;
 
-    // Show results
+    // Stop the timer
+    stopTimer();
+
+    // Reset progress bar to 100%
+    progressBar.style.width = '100%';
+
+    // Calculate and display results
     const wpm = calculateWPM();
     const accuracy = calculateAccuracy();
     const errors = calculateErrors();
 
-    // Display Results
-    wpmResult.textContent = `Words per minute: ${wpm}`;
+    wpmResult.textContent = `Words per minute: ${formatNumberWithCommas(wpm)}`;
     accuracyResult.textContent = `Accuracy: ${accuracy}%`;
     errorsResult.textContent = `Errors: ${errors}`;
-    
-    // Provide feedback
-    provideFeedback(wpm, accuracy);
 
-    // Show the results section
+    // Provide end-of-test suggestions
+    provideEndTestSuggestions(wpm, accuracy, feedback);
+
     resultsSection.classList.remove('hidden');
+    toggleControls(false);
 }
 
-// Calculate Words per Minute (WPM)
+// Calculate Words Per Minute (WPM)
 function calculateWPM() {
-    const timeInMinutes = timeRemaining / 60;
-    const typedWords = userInput.value.trim().split(/\s+/).length;
-    return Math.round(typedWords / timeInMinutes);
+    const minutes = testDuration / 60;
+    const words = userInput.value.trim().split(/\s+/).length;
+    return Math.round(words / minutes);
 }
 
-// Calculate accuracy (correct characters / total characters)
+// Calculate accuracy
 function calculateAccuracy() {
-    const correctPercentage = (correctChars / totalChars) * 100;
-    return Math.round(correctPercentage) || 0; // Avoid NaN if no characters are typed
+    return totalChars > 0 ? Math.round((correctChars / totalChars) * 100) : 0;
 }
 
-// Calculate number of errors (incorrect characters)
+// Calculate number of errors
 function calculateErrors() {
     return incorrectChars;
 }
 
-// Provide feedback based on typing performance
-function provideFeedback(wpm, accuracy) {
-    if (accuracy < 80) {
-        feedback.innerHTML = "<p>Focus on accuracy!</p>";
-    } else if (wpm < 30) {
-        feedback.innerHTML = "<p>Great speed, but try to improve accuracy!</p>";
-    } else {
-        feedback.innerHTML = "<p>Great job! Keep practicing!</p>";
-    }
-}
-
-// Handle user input and check each typed character
-userInput.addEventListener('input', () => {
-    const typedText = userInput.value;
-    const testText = testParagraph.textContent;
-    let matchCount = 0;
-    
-    // Loop through each character and compare to the test text
-    for (let i = 0; i < typedText.length; i++) {
-        if (typedText[i] === testText[i]) {
-            matchCount++;
-            correctChars++;
-        } else {
-            incorrectChars++;
-        }
-        totalChars++;
-    }
-
-    // Highlight correct/incorrect characters in real-time (simple logic)
-    const typedTextArray = typedText.split('');
-    const highlightedText = typedTextArray.map((char, index) => {
-        if (char === testText[index]) {
-            return `<span style="color: green">${char}</span>`; // Correct character
-        } else {
-            return `<span style="color: red">${char}</span>`; // Incorrect character
-        }
-    }).join('');
-
-    // Update the test paragraph with highlighted characters
-    testParagraph.innerHTML = highlightedText;
-});
-
 // Retry the test
 function retryTest() {
-    // Hide results and reset the UI
-    resultsSection.classList.add('hidden');
-    document.getElementById('duration').disabled = false;
-    document.getElementById('difficulty').disabled = false;
-    startButton.disabled = false;
+    stopTimer();
+    countdown.textContent = '00:00';
+    resetTestState();
+    toggleControls(false);
+
+    // Focus the input field again after resetting the test
+    userInput.focus();
+}
+
+// Toggle controls (Enable/Disable dropdowns and buttons)
+function toggleControls(disable) {
+    document.getElementById('duration').disabled = disable;
+    document.getElementById('difficulty').disabled = disable;
+    document.getElementById('challengeCategory').disabled = disable;
+    startButton.disabled = disable;
+}
+
+// Update the progress bar based on the remaining time
+function updateProgressBar(timeLeft) {
+    const percentage = (timeLeft / testDuration) * 100; // Calculate the remaining time as a percentage
+    progressBar.style.width = `${percentage}%`; // Set the width of the progress bar
 }
